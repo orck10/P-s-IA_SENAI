@@ -14,15 +14,13 @@
    (Pessoa (nome "Carla") (temperatura 38.1))
    (Pessoa (nome "Daniel") (temperatura 39.0))
    (Pessoa (nome "Elisa") (temperatura 36.8))
-   (Pacientes (alta) (doentes))
 )
 
 (defrule classificar-doentes
-   (Pacientes)
    =>
    (bind ?doentes (create$))
    (bind ?alta (create$))
-   
+
    (bind ?pessoas (find-all-facts ((?p Pessoa)) TRUE))
    (foreach ?p ?pessoas
       (if (> (fact-slot-value ?p temperatura) 37.0)
@@ -32,25 +30,20 @@
             (bind ?alta (create$ ?alta ?p))
       )
    )
-   
+
    (assert (Pacientes (alta ?alta) (doentes ?doentes)))
-; Imprime os resultados
-   (printout t "Pacientes classificados!" crlf)
-   (printout t "Doentes:" crlf)
-   (foreach ?d ?doentes
-      (printout t " - " (fact-slot-value ?d nome) " (" (fact-slot-value ?d temperatura) ")" crlf)
-   )
-   (printout t "Alta:" crlf)
-   (foreach ?a ?alta
-      (printout t " - " (fact-slot-value ?a nome) " (" (fact-slot-value ?a temperatura) ")" crlf)
-   )
 )
 
-(defrule finalizar
-   ?p <- (Pacientes (alta ?alta) (doentes ?doentes))
+(defrule imprimir-pacientes
+   (Pacientes (alta $?alta) (doentes $?doentes))
    =>
-   (printout t "Sistema finalizado!" crlf)
-   (retract ?p)
+   (printout t crlf "Pacientes com alta:" crlf)
+   (foreach ?pessoa ?alta
+      (printout t "- " (fact-slot-value ?pessoa nome) " (" (fact-slot-value ?pessoa temperatura) "°C)" crlf)
+   )
+
+   (printout t crlf "Pacientes doentes:" crlf)
+   (foreach ?pessoa ?doentes
+      (printout t "- " (fact-slot-value ?pessoa nome) " (" (fact-slot-value ?pessoa temperatura) "°C)" crlf)
+   )
 )
-
-
