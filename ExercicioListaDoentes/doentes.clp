@@ -34,16 +34,20 @@
    (assert (Pacientes (alta ?alta) (doentes ?doentes)))
 )
 
+(deffunction imprimir-pessoa (?pessoa)
+   (printout t "- " (fact-slot-value ?pessoa nome) " (" (fact-slot-value ?pessoa temperatura) "°C)" crlf)
+)
+
 (defrule imprimir-pacientes
    (Pacientes (alta $?alta) (doentes $?doentes))
    =>
    (printout t crlf "Pacientes com alta:" crlf)
    (foreach ?pessoa ?alta
-      (printout t "- " (fact-slot-value ?pessoa nome) " (" (fact-slot-value ?pessoa temperatura) "°C)" crlf)
+      (imprimir-pessoa ?pessoa)
    )
 
    (printout t crlf "Pacientes doentes:" crlf)
    (foreach ?pessoa ?doentes
-      (printout t "- " (fact-slot-value ?pessoa nome) " (" (fact-slot-value ?pessoa temperatura) "°C)" crlf)
+      (imprimir-pessoa ?pessoa)
    )
 )
