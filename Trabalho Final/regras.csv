@@ -1,0 +1,3 @@
+tamanho complexidade escalabilidade tamanho_equipe necessidade_integracao tipo_banco stream_fila tipo_arq
+pequeno baixa baixa pequena baixa SQL nao MVC
+medio media alta media alta NoSQL sim MS 
