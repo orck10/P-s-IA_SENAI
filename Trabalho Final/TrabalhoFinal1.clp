@@ -17,8 +17,6 @@
     (slot escalabilidade (type SYMBOL) (allowed-values baixa media alta))
     (slot tamanho_equipe (type SYMBOL) (allowed-values pequena media grande))
     (slot necessidade_integracao (type SYMBOL) (allowed-values baixa media alta))
-    (slot tipo_banco (type SYMBOL) (allowed-values SQL NoSQL))
-    (slot stream_fila (type SYMBOL) (allowed-values sim nao))
 )
 
 (deftemplate sistema_saida
@@ -29,9 +27,7 @@
 )
 
 ; Função para ler o arquivo CSV e criar fatos
-(defrule ler-csv
-    (declare (salience 100)) ; Prioridade alta para garantir que o CSV seja lido primeiro
-    =>
+(deffunction ler-csv ()
     (open "C:\\Users\\orck1\\OneDrive\\Documentos\\pos-senai\\P-s-IA_SENAI\\Trabalho Final\\regras.csv" arquivo "r")
     (bind ?linha (readline arquivo)) ; Ignora o cabeçalho, se houver
     (while (neq ?linha EOF)
@@ -51,7 +47,26 @@
             )
     )
     (close arquivo)
-    (assert (csv-lido))
+)
+
+(deffunction ler-teste ()
+    (open "C:\\Users\\orck1\\OneDrive\\Documentos\\pos-senai\\P-s-IA_SENAI\\Trabalho Final\\teste.csv" arquivo "r")
+    (bind ?linha (readline arquivo)) ; Ignora o cabeçalho, se houver
+    (while (neq ?linha EOF)
+        (bind ?linha (readline arquivo))
+        (if (neq ?linha EOF) then
+            (bind ?valores (explode$ ?linha)) ; Divide a linha em uma lista de valores
+            (assert (sistema_entrada
+                    (nome_sistema (nth$ 1 ?valores))
+                    (tamanho (nth$ 2 ?valores))
+                    (complexidade (nth$ 3 ?valores))
+                    (escalabilidade (nth$ 4 ?valores))
+                    (tamanho_equipe (nth$ 5 ?valores))
+                    (necessidade_integracao (nth$ 6 ?valores))
+                ))
+            )
+    )
+    (close arquivo)
 )
 
 ; Função para coletar entrada do usuário
@@ -90,15 +105,78 @@
    (declare (salience 80))
    =>
    (bind ?entrada "")
-   (while (neq ?entrada sair)
+   (bind ?teste-lido FALSE)
+   (ler-csv) ; Lê o arquivo CSV para carregar os dados
+   (printout t "=== Bem-vindo ao Sistema de Recomendação de Arquitetura ===" crlf)
+   (while (neq ?entrada 3)
+        
         (printout t "=== Selecinar Tipo de entrada de Dados :  ===" crlf)
         (printout t "=== 1 - para entrada manual  ===" crlf)
         (printout t "=== 2 - para leitura de arquivo  ===" crlf)
-
-
-        (printout t "Digite 'sair' para encerrar ou pressione Enter para continuar: ")
-        (system "cls")
+        (printout t "=== 3 - para encerrar leitura do sistema ===" crlf)
         (bind ?entrada (read))
+        (if (eq ?entrada 1) then
+            (entrar-sistema) ; Coleta dados manualmente
+        )
+        (if (and (eq ?entrada 2) (eq ?teste-lido FALSE)) then
+            (printout t "=== Lendo arquivo CSV ===" crlf)
+            (ler-teste) ; Lê o arquivo CSV para carregar os dados
+            (printout t "=== Dados lidos com sucesso! ===" crlf)
+            (bind ?teste-lido TRUE) ; Marca que o teste foi lido
+        )
+        (if (eq ?entrada 3) then
+            (printout t "Encerrando leitura.." crlf)
+            (return)
+        )
+        (if (or (eq ?entrada 1) (eq ?entrada 2)) then
+            (printout t "=== Dados coletados com sucesso! ===" crlf)
+        else
+            ; Se a entrada não for 1, 2 ou 3, exibe mensagem de erro
+            (printout t "Opção inválida. Tente novamente." crlf)
+        )
    )
    
+)
+
+(defrule recomendar-arquitetura
+    (declare (salience 70))
+    (sistema_entrada
+        (nome_sistema ?nome_sistema)
+        (tamanho ?tamanho)
+        (complexidade ?complexidade)
+        (escalabilidade ?escalabilidade)
+        (tamanho_equipe ?tamanho_equipe)
+        (necessidade_integracao ?necessidade_integracao)
+    )
+    =>
+    (do-for-all-facts ((?sistema sistema))
+        (and
+            (eq ?sistema:tamanho ?tamanho)
+            (eq ?sistema:complexidade ?complexidade)
+            (eq ?sistema:escalabilidade ?escalabilidade)
+            (eq ?sistema:tamanho_equipe ?tamanho_equipe)
+            (eq ?sistema:necessidade_integracao ?necessidade_integracao)
+        )
+        (assert (sistema_saida
+                (nome_sistema ?nome_sistema)
+                (tipo_banco ?sistema:tipo_banco)
+                (stream_fila ?sistema:stream_fila)
+                (tipo_arq ?sistema:tipo_arq))
+        )
+    )
+)
+
+(defrule exibir-recomendacao
+    (declare (salience 60))
+    (sistema_saida
+        (nome_sistema ?nome_sistema)
+        (tipo_banco ?tipo_banco)
+        (stream_fila ?stream_fila)
+        (tipo_arq ?tipo_arq)
+    )
+    =>
+    (printout t "=== Recomendação para o Sistema: " ?nome_sistema " ===" crlf)
+    (printout t "Tipo de Banco: " ?tipo_banco crlf)
+    (printout t "Uso de Stream/Fila: " ?stream_fila crlf)
+    (printout t "Tipo de Arquitetura: " ?tipo_arq crlf)
 )
