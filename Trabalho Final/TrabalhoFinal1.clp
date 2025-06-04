@@ -43,8 +43,9 @@
                     (tipo_banco (nth$ 6 ?valores))
                     (stream_fila (nth$ 7 ?valores))
                     (tipo_arq (nth$ 8 ?valores))
-                ))
+                )
             )
+        )
     )
     (close arquivo)
 )
@@ -63,8 +64,9 @@
                     (escalabilidade (nth$ 4 ?valores))
                     (tamanho_equipe (nth$ 5 ?valores))
                     (necessidade_integracao (nth$ 6 ?valores))
-                ))
+                )
             )
+        )
     )
     (close arquivo)
 )
@@ -97,7 +99,8 @@
            (escalabilidade ?escalabilidade)
            (tamanho_equipe ?tamanho_equipe)
            (necessidade_integracao ?necessidade_integracao)
-       ))
+        )
+    )
 )
 
 ; Regra para iniciar o sistema
@@ -134,7 +137,7 @@
             ; Se a entrada não for 1, 2 ou 3, exibe mensagem de erro
             (printout t "Opção inválida. Tente novamente." crlf)
         )
-   )
+    )
    
 )
 
