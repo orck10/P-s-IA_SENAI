@@ -178,8 +178,14 @@
         (tipo_arq ?tipo_arq)
     )
     =>
-    (printout t "=== Recomendação para o Sistema: " ?nome_sistema " ===" crlf)
-    (printout t "Tipo de Banco: " ?tipo_banco crlf)
-    (printout t "Uso de Stream/Fila: " ?stream_fila crlf)
-    (printout t "Tipo de Arquitetura: " ?tipo_arq crlf)
+    ; Abre o arquivo no modo de escrita ("w" para sobrescrever, "a" para anexar)
+    (open "C:\\Users\\orck1\\OneDrive\\Documentos\\pos-senai\\P-s-IA_SENAI\\Trabalho Final\\recomendacao.txt" recomendacao "a")
+
+    (printout recomendacao "=== Recomendação para o Sistema: " ?nome_sistema " ===" crlf)
+    (printout recomendacao "Tipo de Banco: " ?tipo_banco crlf)
+    (printout recomendacao "Uso de Stream/Fila: " ?stream_fila crlf)
+    (printout recomendacao "Tipo de Arquitetura: " ?tipo_arq crlf)
+
+    ; Fecha o arquivo
+    (close recomendacao)
 )

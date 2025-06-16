@@ -1,3 +1,4 @@
 nome_sistema tamanho complexidade escalabilidade tamanho_equipe necessidade_integracao
 teste1 pequeno baixa baixa pequena baixa
 teste2 medio media alta media alta
+teste3 medio alta alta media alta
