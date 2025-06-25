@@ -1,0 +1,8 @@
+=== Recomendação para o Sistema: teste1 ===
+Tipo de Banco: SQL
+Uso de Stream/Fila: nao
+Tipo de Arquitetura: MVC
+=== Recomendação para o Sistema: teste2 ===
+Tipo de Banco: NoSQL
+Uso de Stream/Fila: sim
+Tipo de Arquitetura: MS
